@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Kanban status colors */
+  --color-todo: #3B82F6;
+  --color-in-progress: #F59E0B;
+  --color-done: #10B981;
+
+  /* App surface */
+  --color-surface: #F8FAFC;
+  --color-surface-dark: #0F172A;
+}
+
+html,
+body {
+  @apply bg-slate-50 dark:bg-slate-950 min-h-screen;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
