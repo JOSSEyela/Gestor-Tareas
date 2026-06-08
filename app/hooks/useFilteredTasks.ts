@@ -57,4 +57,3 @@ export function useFilteredTasksByColumn(status: Status): Task[] {
     return sortTasks(filtered, sortBy);
   }, [tasks, status, searchTerm, filterByPriority, sortBy]);
 }
-

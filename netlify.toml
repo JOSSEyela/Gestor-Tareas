@@ -1,8 +1,33 @@
-[build]
-  command = "npm run build"
-  publish = "build/client"
+# ─── Configuración Netlify CI/CD ────────────────────────────────────────────
+# Build command: npm run build
+# Publish dir:   build/client  (output de React Router v7 SPA mode)
 
+[build]
+  command     = "npm run build"
+  publish     = "build/client"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS    = "--prefer-offline"
+
+# ─── Headers de seguridad ────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+
+# Assets estáticos con caché agresiva (nombre incluye hash de contenido)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ─── Redirect SPA — todas las rutas sirven index.html ────────────────────────
+# Necesario para que React Router v7 maneje el enrutamiento del lado del cliente
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from   = "/*"
+  to     = "/index.html"
   status = 200
