@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import {
   type Task,
   type Status,
@@ -12,15 +13,14 @@ interface TaskState {
 }
 
 interface TaskActions {
-
-  addTask: (data: NewTaskData) => void;
+  addTask:    (data: NewTaskData) => void;
   updateTask: (id: string, updates: UpdateTaskData) => void;
   deleteTask: (id: string) => void;
-  moveTask: (id: string, newStatus: Status) => void;
+  moveTask:   (id: string, newStatus: Status) => void;
+  clearTasks: () => void;
 }
 
 export type TaskStore = TaskState & TaskActions;
-
 
 
 const INITIAL_TASKS: Task[] = [
@@ -67,43 +67,65 @@ const INITIAL_TASKS: Task[] = [
 ];
 
 
+export const useTaskStore = create<TaskStore>()(
+  persist(
+    (set) => ({
+      tasks: INITIAL_TASKS,
 
-export const useTaskStore = create<TaskStore>()((set) => ({
-  tasks: INITIAL_TASKS,
+      addTask: (data) =>
+        set((state) => ({
+          tasks: [
+            ...state.tasks,
+            {
+              ...data,
+              id:        crypto.randomUUID(),
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        })),
 
-  addTask: (data) =>
-    set((state) => ({
-      tasks: [
-        ...state.tasks,
-        {
-          ...data,
-          id:        crypto.randomUUID(),
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    })),
+      updateTask: (id, updates) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, ...updates } : task,
+          ),
+        })),
 
-  updateTask: (id, updates) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, ...updates } : task,
-      ),
-    })),
+      deleteTask: (id) =>
+        set((state) => ({
+          tasks: state.tasks.filter((task) => task.id !== id),
+        })),
 
-  deleteTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task.id !== id),
-    })),
+      moveTask: (id, newStatus) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, status: newStatus } : task,
+          ),
+        })),
 
-  moveTask: (id, newStatus) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, status: newStatus } : task,
-      ),
-    })),
-}));
+      clearTasks: () => set({ tasks: [] }),
+    }),
+    {
+      name:    "gestor-tareas-state",
+      storage: createJSONStorage(() => localStorage),
 
-export const selectTasksByStatus = (status: Status) => (state: TaskStore) =>
-  state.tasks.filter((t) => t.status === status);
+      partialize: (state) => ({ tasks: state.tasks }),
+
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error("[Zustand] Error al restaurar desde localStorage:", error);
+        }
+      },
+
+      version: 1,
+    },
+  ),
+);
+
+
+export const selectTasksByStatus =
+  (status: Status) => (state: TaskStore) =>
+    state.tasks.filter((t) => t.status === status);
+
 
 export const selectTaskCount = (state: TaskStore) => state.tasks.length;
