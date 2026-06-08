@@ -8,6 +8,7 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import { Navbar } from "~/components/layout";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
@@ -25,14 +26,14 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" className="h-full">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="h-full bg-slate-50 dark:bg-slate-950">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,7 +43,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="flex min-h-full flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
@@ -64,12 +72,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
       <div className="text-center">
-        <h1 className="text-6xl font-bold text-gray-900 dark:text-white">
-          {message}
+        <p className="text-7xl font-black text-slate-200 dark:text-slate-800 select-none">
+          {error instanceof Error ? "500" : message}
+        </p>
+        <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+          {details}
         </h1>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">{details}</p>
         {stack && (
-          <pre className="mt-4 w-full p-4 overflow-x-auto text-left text-sm bg-gray-100 rounded-lg">
+          <pre className="mt-4 max-w-2xl overflow-x-auto rounded-lg bg-slate-100 dark:bg-slate-900 p-4 text-left text-xs">
             <code>{stack}</code>
           </pre>
         )}

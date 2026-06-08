@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Route } from "./+types/home";
 import { Button, Badge } from "~/components/ui";
 import { useTaskStore, selectTaskCount } from "~/store/taskStore";
@@ -47,22 +48,21 @@ export default function Home() {
 
               {/* Tarjetas de tareas */}
               {columnTasks.map((task) => (
-                <div
+                <Link
                   key={task.id}
-                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 space-y-2 animate-fade-in"
+                  to={`/task/${task.id}`}
+                  className="block rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 space-y-2 animate-fade-in hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-sm transition-all duration-150 group"
                 >
-                  <p className="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug">
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                     {task.title}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
                     {task.description}
                   </p>
-                  <Badge
-                    variant={`priority-${task.priority}`}
-                  >
+                  <Badge variant={`priority-${task.priority}`}>
                     {PRIORITY_LABELS[task.priority]}
                   </Badge>
-                </div>
+                </Link>
               ))}
             </div>
           );
