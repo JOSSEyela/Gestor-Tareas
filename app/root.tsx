@@ -51,11 +51,6 @@ export default function App() {
   return (
     <div className="flex min-h-full flex-col">
       <Navbar />
-      {/*
-       * Suspense boundary global — captura los lazy chunks de React Router v7.
-       * Cada ruta (home, task.$id, 404) tiene su propio chunk por la arquitectura
-       * de React Router framework mode (code splitting automático por ruta).
-       */}
       <main className="flex-1">
         <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
           <Outlet />

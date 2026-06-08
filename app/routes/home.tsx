@@ -5,7 +5,6 @@ import { Button } from "~/components/ui";
 import { KanbanBoard, SearchBar } from "~/components/kanban";
 import { useTaskStore, selectTaskCount } from "~/store/taskStore";
 
-// React.lazy: TaskModal se carga en un chunk separado — solo cuando se abre por primera vez
 const TaskModal = lazy(() =>
   import("~/components/kanban/TaskModal").then((m) => ({ default: m.TaskModal })),
 );
@@ -86,7 +85,6 @@ export default function Home() {
         onDeleteTask={handleDeleteTask}
       />
 
-      {/* Suspense: TaskModal se carga bajo demanda (chunk separado via React.lazy) */}
       <Suspense fallback={null}>
         <TaskModal
           key={`${editingTask?.id ?? "new"}-${defaultStatus}`}

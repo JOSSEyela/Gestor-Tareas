@@ -12,10 +12,6 @@ const sizeClasses = {
   lg: "h-12 w-12 border-[3px]",
 };
 
-/**
- * Spinner de carga reutilizable.
- * Usado como fallback en Suspense boundaries.
- */
 export function LoadingSpinner({
   size     = "md",
   label    = "Cargando…",
