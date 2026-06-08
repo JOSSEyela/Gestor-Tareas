@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { type Priority } from "~/types/task";
 
-// ─── Tipos ──────────────────────────────────────────────────────────────────
 
 export type SortBy = "date-desc" | "date-asc" | "priority";
 
@@ -20,7 +19,6 @@ interface FilterActions {
 
 export type FilterStore = FilterState & FilterActions;
 
-// ─── Valores por defecto ─────────────────────────────────────────────────────
 
 const DEFAULT_STATE: FilterState = {
   searchTerm:       "",
@@ -28,7 +26,6 @@ const DEFAULT_STATE: FilterState = {
   sortBy:           "date-desc",
 };
 
-// ─── Store (sin persist — los filtros se reinician con cada sesión) ──────────
 
 export const useFilterStore = create<FilterStore>()((set) => ({
   ...DEFAULT_STATE,
@@ -39,9 +36,6 @@ export const useFilterStore = create<FilterStore>()((set) => ({
   clearFilters:        ()         => set({ ...DEFAULT_STATE }),
 }));
 
-// ─── Selectores ──────────────────────────────────────────────────────────────
-
-/** true si hay algún filtro activo (para mostrar el botón "Limpiar filtros") */
 export const selectHasActiveFilters = (state: FilterStore) =>
   state.searchTerm       !== DEFAULT_STATE.searchTerm       ||
   state.filterByPriority !== DEFAULT_STATE.filterByPriority ||
