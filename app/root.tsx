@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { Toaster } from "react-hot-toast";
 
 import type { Route } from "./+types/root";
 import { Navbar }         from "~/components/layout";
@@ -56,20 +57,41 @@ export default function App() {
           <Outlet />
         </Suspense>
       </main>
+
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "12px",
+            fontFamily:   "Inter, ui-sans-serif, system-ui, sans-serif",
+            fontSize:     "14px",
+            fontWeight:   "500",
+            padding:      "12px 16px",
+            boxShadow:    "0 8px 32px rgba(0,0,0,0.12)",
+          },
+          success: {
+            iconTheme: { primary: "#10b981", secondary: "#ecfdf5" },
+          },
+          error: {
+            iconTheme: { primary: "#ef4444", secondary: "#fef2f2" },
+          },
+        }}
+      />
     </div>
   );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "¡Oops!";
-  let details = "Ocurrió un error inesperado.";
+  let message = "Oops!";
+  let details = "Ocurrio un error inesperado.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
     details =
       error.status === 404
-        ? "La página que buscas no existe."
+        ? "La pagina que buscas no existe."
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
