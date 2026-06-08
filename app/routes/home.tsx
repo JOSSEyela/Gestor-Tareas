@@ -14,15 +14,13 @@ export function meta(_args: Route.MetaArgs) {
 export default function Home() {
   const totalTasks = useTaskStore(selectTaskCount);
 
-  // Handlers — conectados al store en Issues #20 y #21
-  const handleAddTask    = (_status?: string) => { /* Issue #20 */ };
-  const handleEditTask   = (_task: Task)       => { /* Issue #20 */ };
-  const handleDeleteTask = (_id: string)      => { /* Issue #21 */ };
+  const handleAddTask    = (_status?: string) => {  };
+  const handleEditTask   = (_task: Task)       => {  };
+  const handleDeleteTask = (_id: string)      => {  };
 
   return (
     <div className="min-h-[calc(100vh-56px)] bg-slate-50 dark:bg-slate-950">
 
-      {/* ── Page header ── */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -48,7 +46,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Kanban Board ── */}
       <KanbanBoard
         onAddTask={handleAddTask}
         onEditTask={handleEditTask}
