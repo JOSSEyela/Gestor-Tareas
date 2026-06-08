@@ -1,7 +1,8 @@
+import { useState, useCallback } from "react";
 import type { Route } from "./+types/home";
-import { type Task } from "~/types/task";
+import { type Task, type Status } from "~/types/task";
 import { Button } from "~/components/ui";
-import { KanbanBoard } from "~/components/kanban";
+import { KanbanBoard, TaskModal } from "~/components/kanban";
 import { useTaskStore, selectTaskCount } from "~/store/taskStore";
 
 export function meta(_args: Route.MetaArgs) {
@@ -13,10 +14,34 @@ export function meta(_args: Route.MetaArgs) {
 
 export default function Home() {
   const totalTasks = useTaskStore(selectTaskCount);
+  const deleteTask = useTaskStore((s) => s.deleteTask);
 
-  const handleAddTask    = (_status?: string) => {  };
-  const handleEditTask   = (_task: Task)       => {  };
-  const handleDeleteTask = (_id: string)      => {  };
+  const [modalOpen,     setModalOpen]     = useState(false);
+  const [editingTask,   setEditingTask]   = useState<Task | undefined>();
+  const [defaultStatus, setDefaultStatus] = useState<Status>("todo");
+
+  const handleAddTask = useCallback((status?: Task["status"]) => {
+    setEditingTask(undefined);
+    setDefaultStatus(status ?? "todo");
+    setModalOpen(true);
+  }, []);
+
+  const handleEditTask = useCallback((task: Task) => {
+    setEditingTask(task);
+    setModalOpen(true);
+  }, []);
+
+  // Delete básico — toasts y confirmación mejorada en Issue #21
+  const handleDeleteTask = useCallback((id: string) => {
+    if (window.confirm("¿Eliminar esta tarea? Esta acción no se puede deshacer.")) {
+      deleteTask(id);
+    }
+  }, [deleteTask]);
+
+  const handleCloseModal = useCallback(() => {
+    setModalOpen(false);
+    setEditingTask(undefined);
+  }, []);
 
   return (
     <div className="min-h-[calc(100vh-56px)] bg-slate-50 dark:bg-slate-950">
@@ -50,6 +75,14 @@ export default function Home() {
         onAddTask={handleAddTask}
         onEditTask={handleEditTask}
         onDeleteTask={handleDeleteTask}
+      />
+
+      <TaskModal
+        key={`${editingTask?.id ?? "new"}-${defaultStatus}`}
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
+        task={editingTask}
+        defaultStatus={defaultStatus}
       />
     </div>
   );
