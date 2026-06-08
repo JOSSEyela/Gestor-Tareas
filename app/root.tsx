@@ -11,6 +11,7 @@ import {
 import type { Route } from "./+types/root";
 import { Navbar }         from "~/components/layout";
 import { LoadingSpinner } from "~/components/ui";
+import { env }            from "~/config/env";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
@@ -32,6 +33,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="application-name" content={env.VITE_APP_NAME} />
+        <meta name="version"          content={env.VITE_APP_VERSION} />
         <Meta />
         <Links />
       </head>
