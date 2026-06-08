@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -8,7 +9,8 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import { Navbar } from "~/components/layout";
+import { Navbar }         from "~/components/layout";
+import { LoadingSpinner } from "~/components/ui";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
@@ -46,8 +48,15 @@ export default function App() {
   return (
     <div className="flex min-h-full flex-col">
       <Navbar />
+      {/*
+       * Suspense boundary global — captura los lazy chunks de React Router v7.
+       * Cada ruta (home, task.$id, 404) tiene su propio chunk por la arquitectura
+       * de React Router framework mode (code splitting automático por ruta).
+       */}
       <main className="flex-1">
-        <Outlet />
+        <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

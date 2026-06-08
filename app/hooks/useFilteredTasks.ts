@@ -8,7 +8,6 @@ export function sortTasks(tasks: Task[], sortBy: SortBy): Task[] {
   return [...tasks].sort((a, b) => {
     switch (sortBy) {
       case "priority":
-        // Mayor peso = mayor prioridad → aparece primero
         return PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
       case "date-asc":
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -58,3 +57,4 @@ export function useFilteredTasksByColumn(status: Status): Task[] {
     return sortTasks(filtered, sortBy);
   }, [tasks, status, searchTerm, filterByPriority, sortBy]);
 }
+

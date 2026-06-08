@@ -1,9 +1,14 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 import type { Route } from "./+types/home";
 import { type Task, type Status } from "~/types/task";
 import { Button } from "~/components/ui";
-import { KanbanBoard, TaskModal, SearchBar } from "~/components/kanban";
+import { KanbanBoard, SearchBar } from "~/components/kanban";
 import { useTaskStore, selectTaskCount } from "~/store/taskStore";
+
+// React.lazy: TaskModal se carga en un chunk separado — solo cuando se abre por primera vez
+const TaskModal = lazy(() =>
+  import("~/components/kanban/TaskModal").then((m) => ({ default: m.TaskModal })),
+);
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -81,13 +86,16 @@ export default function Home() {
         onDeleteTask={handleDeleteTask}
       />
 
-      <TaskModal
-        key={`${editingTask?.id ?? "new"}-${defaultStatus}`}
-        isOpen={modalOpen}
-        onClose={handleCloseModal}
-        task={editingTask}
-        defaultStatus={defaultStatus}
-      />
+      {/* Suspense: TaskModal se carga bajo demanda (chunk separado via React.lazy) */}
+      <Suspense fallback={null}>
+        <TaskModal
+          key={`${editingTask?.id ?? "new"}-${defaultStatus}`}
+          isOpen={modalOpen}
+          onClose={handleCloseModal}
+          task={editingTask}
+          defaultStatus={defaultStatus}
+        />
+      </Suspense>
     </div>
   );
 }

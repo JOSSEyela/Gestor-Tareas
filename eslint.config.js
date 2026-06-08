@@ -63,5 +63,14 @@ export default tseslint.config(
       // No usar ! non-null assertion sin necesidad
       "@typescript-eslint/no-non-null-assertion": "warn",
     },
+  },
+
+  // Archivos de test — relajar reglas que no aplican en entornos de testing
+  {
+    files: ["**/*.test.{ts,tsx}", "app/test/**/*.{ts,tsx}"],
+    rules: {
+      // Los archivos de test mezclan exports de helpers y tipos — no es un componente HMR
+      "react-refresh/only-export-components": "off",
+    },
   }
 );
