@@ -63,6 +63,17 @@ body {
 .animate-fade-in-scale { animation: fade-in-scale 0.15s ease-out both; }
 .animate-slide-in      { animation: slide-in-right 0.2s ease-out both; }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-in-scale,
+  .animate-slide-in {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 
 @layer components {
 

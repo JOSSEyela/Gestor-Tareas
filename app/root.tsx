@@ -34,6 +34,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
         <meta name="application-name" content={env.VITE_APP_NAME} />
         <meta name="version"          content={env.VITE_APP_VERSION} />
         <Meta />
@@ -43,6 +46,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <noscript>
+          <p style={{ padding: "1rem", textAlign: "center" }}>
+            Esta aplicación requiere JavaScript para funcionar.
+          </p>
+        </noscript>
       </body>
     </html>
   );

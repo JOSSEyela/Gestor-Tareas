@@ -104,7 +104,7 @@ export function SearchBar() {
           "lg:flex lg:flex-row lg:max-h-none lg:opacity-100",
           filtersOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0 lg:opacity-100",
         )}
-        aria-hidden={!filtersOpen}
+        aria-hidden={filtersOpen ? undefined : true}
       >
         <select
           value={filterByPriority}

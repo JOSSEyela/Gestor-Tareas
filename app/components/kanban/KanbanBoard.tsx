@@ -75,6 +75,17 @@ export function KanbanBoard({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      accessibility={{
+        announcements: {
+          onDragStart: ({ active }) => `Arrastrando tarea: ${(active.data.current as { task?: { title?: string } })?.task?.title ?? active.id}`,
+          onDragOver:  ({ over })   => over ? `Sobre columna: ${over.id}` : "Fuera del tablero",
+          onDragEnd:   ({ active, over }) =>
+            over
+              ? `Tarea "${(active.data.current as { task?: { title?: string } })?.task?.title ?? active.id}" movida a ${over.id}`
+              : "Movimiento cancelado",
+          onDragCancel: () => "Arrastre cancelado",
+        },
+      }}
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
