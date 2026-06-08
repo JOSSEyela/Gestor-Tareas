@@ -71,12 +71,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Barra de búsqueda y filtros ── */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-2">
         <SearchBar />
       </div>
 
-      {/* ── Kanban Board ── */}
       <KanbanBoard
         onAddTask={handleAddTask}
         onEditTask={handleEditTask}
