@@ -10,9 +10,10 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { type Task, type Status, COLUMN_ORDER } from "~/types/task";
-import { useTaskStore } from "~/store/taskStore";
-import { KanbanColumn } from "./KanbanColumn";
-import { TaskCard } from "./TaskCard";
+import { useTaskStore }              from "~/store/taskStore";
+import { useFilteredTasksByColumn }  from "~/hooks/useFilteredTasks";
+import { KanbanColumn }              from "./KanbanColumn";
+import { TaskCard }                  from "./TaskCard";
 
 interface KanbanBoardProps {
   onAddTask?:   (defaultStatus?: Task["status"]) => void;
@@ -27,16 +28,24 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
   const tasks    = useTaskStore((s) => s.tasks);
   const moveTask = useTaskStore((s) => s.moveTask);
-
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+  // ── Tareas filtradas por columna (useMemo interno en el hook) ──
+  // Regla de hooks: se llama a nivel superior, una vez por columna
+  const todoTasks       = useFilteredTasksByColumn("todo");
+  const inProgressTasks = useFilteredTasksByColumn("in-progress");
+  const doneTasks       = useFilteredTasksByColumn("done");
+
+  const filteredByColumn: Record<Status, Task[]> = {
+    "todo":        todoTasks,
+    "in-progress": inProgressTasks,
+    "done":        doneTasks,
+  };
+
+  // ── Sensores dnd-kit ──
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 6 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { delay: 200, tolerance: 8 },
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor,   { activationConstraint: { delay: 200, tolerance: 8 } }),
   );
 
   const handleDragStart = useCallback(
@@ -51,14 +60,10 @@ export function KanbanBoard({
     ({ active, over }: DragEndEvent) => {
       setActiveTask(null);
       if (!over) return;
-
       const taskId    = active.id as string;
       const newStatus = over.id   as Status;
       const task      = tasks.find((t) => t.id === taskId);
-
-      if (task && task.status !== newStatus) {
-        moveTask(taskId, newStatus);
-      }
+      if (task && task.status !== newStatus) moveTask(taskId, newStatus);
     },
     [tasks, moveTask],
   );
@@ -78,7 +83,7 @@ export function KanbanBoard({
             <KanbanColumn
               key={status}
               status={status}
-              tasks={tasks.filter((t) => t.status === status)}
+              tasks={filteredByColumn[status]}
               onAddTask={onAddTask ? () => onAddTask(status) : undefined}
               onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
@@ -88,9 +93,7 @@ export function KanbanBoard({
       </div>
 
       <DragOverlay dropAnimation={{ duration: 180, easing: "ease-out" }}>
-        {activeTask ? (
-          <TaskCard task={activeTask} overlay />
-        ) : null}
+        {activeTask ? <TaskCard task={activeTask} overlay /> : null}
       </DragOverlay>
     </DndContext>
   );
