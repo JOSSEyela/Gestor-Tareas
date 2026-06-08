@@ -15,6 +15,7 @@ import {
   PRIORITY_LABELS,
   COLUMN_ORDER,
 } from "~/types/task";
+import toast from "react-hot-toast";
 import { useTaskStore } from "~/store/taskStore";
 import { Button, Badge } from "~/components/ui";
 import { cn } from "~/lib/utils";
@@ -136,6 +137,7 @@ export function TaskModal({ isOpen, onClose, task, defaultStatus = "todo" }: Tas
           priority:    values.priority,
           status:      values.status,
         });
+        toast.success("Tarea actualizada");
       } else {
         addTask({
           title:       values.title.trim(),
@@ -143,6 +145,7 @@ export function TaskModal({ isOpen, onClose, task, defaultStatus = "todo" }: Tas
           priority:    values.priority,
           status:      values.status,
         });
+        toast.success("Tarea creada");
       }
 
       setIsSubmitting(false);

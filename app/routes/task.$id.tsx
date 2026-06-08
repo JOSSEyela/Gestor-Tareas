@@ -1,7 +1,8 @@
 import { lazy, Suspense, useState, useCallback } from "react";
+import toast from "react-hot-toast";
 import { useParams, Link, useNavigate } from "react-router";
 import type { Route } from "./+types/task.$id";
-import { Badge, Button } from "~/components/ui";
+import { Badge, Button, ConfirmDialog } from "~/components/ui";
 import { useTaskStore } from "~/store/taskStore";
 import {
   type Status,
@@ -34,7 +35,8 @@ export default function TaskDetail() {
   const moveTask     = useTaskStore((s) => s.moveTask);
   const deleteTask   = useTaskStore((s) => s.deleteTask);
 
-  const [editOpen, setEditOpen] = useState(false);
+  const [editOpen,    setEditOpen]    = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleStatusChange = useCallback(
     (newStatus: Status) => {
@@ -47,11 +49,18 @@ export default function TaskDetail() {
 
   const handleDelete = useCallback(() => {
     if (!task) return;
-    if (window.confirm(`¿Eliminar "${task.title}"? Esta acción no se puede deshacer.`)) {
-      deleteTask(task.id);
-      navigate("/", { replace: true });
-    }
+    setConfirmOpen(true);
+  }, [task]);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!task) return;
+    deleteTask(task.id);
+    toast.success("Tarea eliminada");
+    setConfirmOpen(false);
+    navigate("/", { replace: true });
   }, [task, deleteTask, navigate]);
+
+  const handleCancelDelete = useCallback(() => setConfirmOpen(false), []);
 
   if (!task) {
     return (
@@ -158,7 +167,7 @@ export default function TaskDetail() {
             id="desc-heading"
             className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400"
           >
-            Descripcion
+            Descripción
           </h2>
           {task.description ? (
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
@@ -166,7 +175,7 @@ export default function TaskDetail() {
             </p>
           ) : (
             <p className="text-sm italic text-slate-400 dark:text-slate-500">
-              Sin descripcion. Edita la tarea para agregar una.
+              Sin descripción. Edita la tarea para agregar una.
             </p>
           )}
         </section>
@@ -225,6 +234,14 @@ export default function TaskDetail() {
           task={task}
         />
       </Suspense>
+
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title="¿Eliminar tarea?"
+        message={`"${task.title}" será eliminada permanentemente.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 }
