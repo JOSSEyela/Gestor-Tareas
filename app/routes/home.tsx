@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import type { Route } from "./+types/home";
 import { type Task, type Status } from "~/types/task";
 import { Button } from "~/components/ui";
-import { KanbanBoard, TaskModal } from "~/components/kanban";
+import { KanbanBoard, TaskModal, SearchBar } from "~/components/kanban";
 import { useTaskStore, selectTaskCount } from "~/store/taskStore";
 
 export function meta(_args: Route.MetaArgs) {
@@ -71,6 +71,12 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ── Barra de búsqueda y filtros ── */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-2">
+        <SearchBar />
+      </div>
+
+      {/* ── Kanban Board ── */}
       <KanbanBoard
         onAddTask={handleAddTask}
         onEditTask={handleEditTask}
