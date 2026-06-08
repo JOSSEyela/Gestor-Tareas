@@ -30,8 +30,7 @@ export function KanbanBoard({
   const moveTask = useTaskStore((s) => s.moveTask);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  // ── Tareas filtradas por columna (useMemo interno en el hook) ──
-  // Regla de hooks: se llama a nivel superior, una vez por columna
+
   const todoTasks       = useFilteredTasksByColumn("todo");
   const inProgressTasks = useFilteredTasksByColumn("in-progress");
   const doneTasks       = useFilteredTasksByColumn("done");
@@ -42,7 +41,7 @@ export function KanbanBoard({
     "done":        doneTasks,
   };
 
-  // ── Sensores dnd-kit ──
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor,   { activationConstraint: { delay: 200, tolerance: 8 } }),
