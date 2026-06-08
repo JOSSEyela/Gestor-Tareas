@@ -8,3 +8,4 @@ export { Avatar } from "./Avatar";
 export type { AvatarProps, AvatarSize } from "./Avatar";
 
 export { LoadingSpinner } from "./LoadingSpinner";
+export { ConfirmDialog }  from "./ConfirmDialog";

@@ -1,7 +1,8 @@
 import { useState, useCallback, lazy, Suspense } from "react";
+import toast from "react-hot-toast";
 import type { Route } from "./+types/home";
 import { type Task, type Status } from "~/types/task";
-import { Button } from "~/components/ui";
+import { Button, ConfirmDialog } from "~/components/ui";
 import { KanbanBoard, SearchBar } from "~/components/kanban";
 import { useTaskStore, selectTaskCount } from "~/store/taskStore";
 
@@ -23,6 +24,8 @@ export default function Home() {
   const [modalOpen,     setModalOpen]     = useState(false);
   const [editingTask,   setEditingTask]   = useState<Task | undefined>();
   const [defaultStatus, setDefaultStatus] = useState<Status>("todo");
+  const [confirmOpen,     setConfirmOpen]     = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const handleAddTask = useCallback((status?: Task["status"]) => {
     setEditingTask(undefined);
@@ -35,12 +38,24 @@ export default function Home() {
     setModalOpen(true);
   }, []);
 
-  // Delete básico — toasts y confirmación mejorada en Issue #21
   const handleDeleteTask = useCallback((id: string) => {
-    if (window.confirm("¿Eliminar esta tarea? Esta acción no se puede deshacer.")) {
-      deleteTask(id);
+    setPendingDeleteId(id);
+    setConfirmOpen(true);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (pendingDeleteId) {
+      deleteTask(pendingDeleteId);
+      toast.success("Tarea eliminada");
     }
-  }, [deleteTask]);
+    setConfirmOpen(false);
+    setPendingDeleteId(null);
+  }, [pendingDeleteId, deleteTask]);
+
+  const handleCancelDelete = useCallback(() => {
+    setConfirmOpen(false);
+    setPendingDeleteId(null);
+  }, []);
 
   const handleCloseModal = useCallback(() => {
     setModalOpen(false);
@@ -94,6 +109,14 @@ export default function Home() {
           defaultStatus={defaultStatus}
         />
       </Suspense>
+
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title="¿Eliminar tarea?"
+        message="Esta acción no se puede deshacer."
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 }
